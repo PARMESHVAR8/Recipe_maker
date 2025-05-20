@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Recipe</title>
+    <style>
+        :root {
+            --primary: #e67e22;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --background: #fff9f0;
+            --text: #333;
+            --light: #f5f5f5;
+            --border: #ddd;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 0;
+            margin: 0;
+            background-color: var(--background);
+            color: var(--text);
+        }
+        
+        .header {
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            background-image: url('https://images.unsplash.com/photo-1495195134817-aeb325a55b65?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        
+        .header h1 {
+            position: relative;
+            z-index: 2;
+            margin: 0;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header p {
+            position: relative;
+            z-index: 2;
+            margin: 10px 0 0;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .new-button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: block;
+            width: 100%;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .new-button:hover {
+            background-color: #27ae60;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        #inputSection {
+            margin-top: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--text);
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .suggestions {
+            border: 1px solid var(--border);
+            margin-top: 5px;
+            border-radius: 5px;
+            background-color: white;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 0;
+        }
+        
+        .suggestions li {
+            list-style: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .suggestions li:last-child {
+            border-bottom: none;
+        }
+        
+        .suggestions li:hover {
+            background-color: var(--light);
+        }
+        
+        #selectedIngredients {
+            margin: 15px 0;
+            min-height: 40px;
+        }
+        
+        .selected {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 12px;
+            margin: 5px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: white;
+            margin-bottom: 20px;
+        }
+        
+        .submit-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-weight: bold;
+        }
+        
+        .submit-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .section-title {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .food-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+                margin: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Recipe Creator</h1>
+        <p>Share your culinary masterpiece with the world</p>
+    </div>
+    
+    <div class="container">
+        <h2 class="section-title">
+            <img src="https://img.icons8.com/color/48/000000/cooking-book.png" alt="" class="food-icon">
+            Create New Recipe
+        </h2>
+        
+        <button onclick="showInput()" class="new-button">Start New Recipe</button>
+        
+        <div id="inputSection" class="hidden">
+            <div class="form-group">
+                <label for="ingredientInput">
+                    <img src="https://img.icons8.com/color/48/000000/vegetables-basket.png" alt="" class="food-icon">
+                    Add Ingredients
+                </label>
+                <input type="text" id="ingredientInput" placeholder="Type ingredient name..." oninput="fetchSuggestions()">
+                <ul id="suggestions" class="suggestions hidden"></ul>
+            </div>
+            
+            <h3 class="section-title">Selected Ingredients</h3>
+            <div id="selectedIngredients"></div>
+            
+            <div class="form-group">
+                <label for="duration">
+                    <img src="https://img.icons8.com/color/48/000000/time.png" alt="" class="food-icon">
+                    Cooking Time
+                </label>
+                <select id="duration">
+                    <option value="00:10:00">10 minutes</option>
+                    <option value="00:30:00">30 minutes</option>
+                    <option value="01:00:00">60 minutes</option>
+                </select>
+            </div>
+            
+            <button onclick="submitRecipe()" class="submit-btn">Submit Recipe</button>
+        </div>
+        
+        <div id="recipeIdContainer"></div>
+    </div>
+    
+    <script>
+        function showInput() {
+            document.getElementById('inputSection').classList.remove('hidden');
+        }
+
+        function fetchSuggestions() {
+            let input = document.getElementById('ingredientInput').value.trim();
+            let suggestionsBox = document.getElementById('suggestions');
+            suggestionsBox.innerHTML = '';
+            if (input === '') {
+                suggestionsBox.classList.add('hidden');
+                return;
+            }
+            fetch(`http://localhost:3000/api/ingredients?q=${input}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        data.forEach(item => {
+                            let li = document.createElement('li');
+                            li.textContent = item.ingredient_name;
+                            li.onclick = function () { addIngredient(item.ingredient_name); };
+                            suggestionsBox.appendChild(li);
+                        });
+                        suggestionsBox.classList.remove('hidden');
+                    } else {
+                        suggestionsBox.classList.add('hidden');
+                    }
+                })
+                .catch(error => console.error('Error fetching suggestions:', error));
+        }
+
+        function addIngredient(ingredient) {
+            let selectedDiv = document.getElementById('selectedIngredients');
+            if (!selectedDiv.innerHTML.includes(ingredient)) {
+                let span = document.createElement('span');
+                span.textContent = ingredient;
+                span.classList.add('selected');
+                selectedDiv.appendChild(span);
+            }
+            document.getElementById('ingredientInput').value = '';
+            document.getElementById('suggestions').classList.add('hidden');
+        }
+
+        function submitRecipe() {
+            let selectedIngredients = Array.from(document.querySelectorAll('#selectedIngredients span')).map(span => span.textContent);
+            let duration = document.getElementById('duration').value;
+        
+            let recipeData = { ingredients: selectedIngredients, duration: duration };
+        
+            fetch('http://localhost:3000/api/recipe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(recipeData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.recipeId) {
+                    alert(`✅ Recipe submitted successfully! Recipe ID: ${data.recipeId}`);
+        
+                    // ✅ Recipe ID को Local Storage में Save करें
+                    localStorage.setItem('recipeId', data.recipeId);
+        
+                    // ✅ Redirect to `recipe.html`
+                    window.location.href = 'recipe.html';
+                } else {
+                    alert('⚠️ Recipe submission successful, but no ID returned.');
+                }
+            })
+            .catch(error => console.error('❌ Error submitting recipe:', error));
+        }
+    </script>
+</body>
+</html>

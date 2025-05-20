@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Details</title>
+    <style>
+        /* Food-themed color palette */
+        :root {
+            --primary: #e67e22; /* Orange */
+            --secondary: #d35400; /* Darker orange */
+            --accent: #27ae60; /* Green */
+            --background: #fff8f0; /* Cream */
+            --card-bg: #fff; /* White */
+            --text: #333; /* Dark gray */
+            --border: #e0e0e0; /* Light gray */
+            --timer-bg: #f9f3e9; /* Light cream */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        h2, h3, h4, h5 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--primary);
+        }
+
+        .header h2 {
+            font-size: 2.2rem;
+            color: var(--primary);
+        }
+
+        #recipeContainer {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-right: 320px;
+            transition: margin-right 0.3s ease;
+        }
+
+        #recipeContainer.expanded {
+            margin-right: 0;
+        }
+
+        .list-group {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .list-group-item {
+            padding: 10px 15px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+
+        .ingredients-list .list-group-item {
+            border-left: 4px solid var(--accent);
+        }
+
+        #stepContainer {
+            background-color: var(--timer-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        #timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-success {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        #stepsSidebar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-color: var(--card-bg);
+            border-left: 3px solid var(--primary);
+            padding: 20px;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        #stepsSidebar.collapsed {
+            transform: translateX(100%);
+        }
+
+        #stepsSidebar h4 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        #toggleBtn {
+            position: fixed;
+            right: 310px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            padding: 15px 10px;
+            cursor: pointer;
+            z-index: 101;
+            transition: right 0.3s ease;
+        }
+
+        #toggleBtn.collapsed {
+            right: 10px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-3 {
+            margin-top: 15px;
+        }
+
+        .text-danger {
+            color: #e74c3c;
+        }
+
+        .recipe-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .recipe-info-item {
+            background-color: var(--timer-bg);
+            padding: 10px 15px;
+            border-radius: 5px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .recipe-info-item strong {
+            color: var(--secondary);
+        }
+
+        .youtube-link {
+            display: inline-block;
+            background-color: #ff0000;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 5px;
+        }
+
+        .youtube-link:hover {
+            background-color: #cc0000;
+        }
+
+        .active-step {
+            background-color: var(--primary) !important;
+            color: white !important;
+        }
+
+        @media (max-width: 768px) {
+            #recipeContainer {
+                margin-right: 0;
+            }
+            
+            #stepsSidebar {
+                width: 250px;
+            }
+            
+            #toggleBtn {
+                padding: 10px 8px;
+            }
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .no-video {
+            background-color: var(--timer-bg);
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: var(--secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>🍽️ Recipe Details</h2>
+        </div>
+        
+        <div id="recipeContainer">Loading...</div>
+        
+        <button id="toggleBtn">➡</button>
+        
+        <div id="stepsSidebar">
+            <h4>🔹 Steps</h4>
+            <ul id="stepsList" class="list-group"></ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const recipeId = localStorage.getItem('recipeId');
+
+            if (!recipeId) {
+                document.getElementById('recipeContainer').innerHTML = '<p class="text-danger">⚠️ No Recipe ID found.</p>';
+                return;
+            }
+
+            fetch(`http://localhost:3000/api/getrecipe/${recipeId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById('recipeContainer').innerHTML = `<p class="text-danger">❌ ${data.error}</p>`;
+                    } else {
+                        // Fetch YouTube Video
+                        fetch(`http://localhost:3000/api/getvideo?q=${encodeURIComponent(data.dish_name)}`)
+                            .then(response => response.json())
+                            .then(videoData => {
+                                let videoContent = '';
+                                if (videoData.youtube_link) {
+                                    // Extract video ID from YouTube URL
+                                    const videoId = extractYouTubeId(videoData.youtube_link);
+                                    videoContent = `
+                                        <div class="video-container">
+                                            <iframe 
+                                                width="100%" 
+                                                height="315" 
+                                                src="https://www.youtube.com/embed/${videoId}" 
+                                                title="YouTube video player" 
+                                                frameborder="0" 
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                                allowfullscreen>
+                                            </iframe>
+                                        </div>`;
+                                } else {
+                                    videoContent = '<p class="no-video">🎥 No video found</p>';
+                                }
+
+                                let stepsHtml = `
+                                    <h3>${data.dish_name}</h3>
+                                    <div class="recipe-info">
+                                        <div class="recipe-info-item">
+                                            <strong>🕒 Duration:</strong> ${data.duration}
+                                        </div>
+                                    </div>
+                                    <div class="recipe-info-item">
+                                        <strong>📄 Description:</strong> ${data.description}
+                                    </div>
+                                   
+                                    
+                                    <h4>🔹 Ingredients:</h4>
+                                    <ul class="list-group ingredients-list">
+                                        ${data.ingredients.map(ing => `<li class="list-group-item">🥄 ${ing}</li>`).join('')}
+                                    </ul>
+                                    
+                                    <h4 class="mt-3">🔹 Current Step:</h4>
+                                    <div id="stepContainer">
+                                        <h5 id="stepText"></h5>
+                                        <p><strong>⏳ Timer:</strong> <span id="timer">00:00</span></p>
+                                        <button class="btn btn-success" onclick="startTimer()">▶ Start</button>
+                                        <button class="btn btn-danger" onclick="stopTimer()">⏹ Stop</button>
+                                    </div>
+                                    
+                                    <div class="text-center mt-3">
+                                        <button id="prevBtn" class="btn btn-primary" onclick="prevStep()">⬅ Previous</button>
+                                        <button id="nextBtn" class="btn btn-primary" onclick="nextStep()">Next ➡</button>
+                                    </div>
+                                     <h4>🎥 Video Tutorial:</h4>
+                                    ${videoContent}
+                                `;
+
+                                document.getElementById('recipeContainer').innerHTML = stepsHtml;
+
+                                // Store steps
+                                window.recipeSteps = data.steps;
+                                window.currentStep = 0;
+                                updateStep();
+                                updateStepsSidebar();
+                            })
+                            .catch(error => console.error('❌ Error fetching YouTube video:', error));
+                    }
+                })
+                .catch(error => console.error('❌ Error fetching recipe:', error));
+        });
+
+        function extractYouTubeId(url) {
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[7].length === 11) ? match[7] : false;
+        }
+
+        function updateStep() {
+            let stepData = window.recipeSteps[window.currentStep];
+            document.getElementById("stepText").innerText = stepData.step;
+            document.getElementById("timer").innerText = stepData.timer;
+            stopTimer(); // Stop timer when changing steps
+
+            document.getElementById("prevBtn").style.display = (window.currentStep === 0) ? "none" : "inline-block";
+            document.getElementById("nextBtn").style.display = (window.currentStep === window.recipeSteps.length - 1) ? "none" : "inline-block";
+            
+            // Highlight current step in sidebar
+            const sidebarSteps = document.querySelectorAll('#stepsList li');
+            sidebarSteps.forEach((step, index) => {
+                if (index === window.currentStep) {
+                    step.classList.add('active-step');
+                } else {
+                    step.classList.remove('active-step');
+                }
+            });
+        }
+
+        function nextStep() {
+            if (window.currentStep < window.recipeSteps.length - 1) {
+                window.currentStep++;
+                updateStep();
+            }
+        }
+
+        function prevStep() {
+            if (window.currentStep > 0) {
+                window.currentStep--;
+                updateStep();
+            }
+        }
+
+        let timerInterval;
+        let totalSeconds = 0;
+
+        function startTimer() {
+            stopTimer(); // Stop any existing timer
+            
+            let timerText = document.getElementById("timer").innerText;
+            let [minutes, seconds] = timerText.split(':').map(Number);
+            totalSeconds = minutes * 60 + seconds;
+
+            if (totalSeconds === 0) return; // Don't start if timer is already at 00:00
+
+            timerInterval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Timer finished!");
+                    return;
+                }
+                totalSeconds--;
+                let min = Math.floor(totalSeconds / 60);
+                let sec = totalSeconds % 60;
+                document.getElementById("timer").innerText = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+        
+        function updateStepsSidebar() {
+            const stepsList = document.getElementById("stepsList");
+            stepsList.innerHTML = window.recipeSteps.map((step, index) => 
+                `<li class="list-group-item ${index === window.currentStep ? 'active-step' : ''}" onclick="goToStep(${index})">
+                    ${index + 1}. ${step.step.substring(0, 40)}${step.step.length > 40 ? '...' : ''}
+                </li>`
+            ).join('');
+        }
+        
+        function goToStep(index) {
+            window.currentStep = index;
+            updateStep();
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("stepsSidebar");
+            const button = document.getElementById("toggleBtn");
+            const recipeContainer = document.getElementById("recipeContainer");
+
+            sidebar.classList.toggle("collapsed");
+            button.classList.toggle("collapsed");
+            recipeContainer.classList.toggle("expanded");
+            
+            if (sidebar.classList.contains("collapsed")) {
+                button.innerHTML = "⬅";
+            } else {
+                button.innerHTML = "➡";
+            }
+        }
+
+        // Initialize toggle button
+        document.getElementById("toggleBtn").addEventListener("click", toggleSidebar);
+    </script>
+</body>
+</html>
+

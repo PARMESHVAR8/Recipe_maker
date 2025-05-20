@@ -1,0 +1,35 @@
+{
+  "dish_name": "Simple Corn and Rice",
+  "youtube_link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "description": "A quick and easy side dish of corn and rice, seasoned simply with salt.",
+  "steps": [
+    {
+      "step": "Rinse the brown rice under cold water until the water runs clear.",
+      "timer": "00:01:00"
+    },
+    {
+      "step": "Heat the sunflower oil in a pan over medium heat.",
+      "timer": "00:00:30"
+    },
+    {
+      "step": "Add the rinsed brown rice to the pan and stir-fry for 1-2 minutes until lightly toasted.",
+      "timer": "00:01:30"
+    },
+    {
+      "step": "Add the sweet corn kernels to the pan and stir to combine.",
+      "timer": "00:00:30"
+    },
+    {
+      "step": "Add salt to taste.",
+      "timer": "00:00:15"
+    },
+    {
+      "step": "Continue to stir-fry for another 2-3 minutes until the corn is heated through and the rice is cooked to your liking. Add a little water if needed to steam the rice.",
+      "timer": "00:03:00"
+    },
+    {
+      "step": "Serve hot.",
+      "timer": "00:00:00"
+    }
+  ]
+}
